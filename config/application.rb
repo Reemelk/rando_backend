@@ -20,6 +20,7 @@ module Monoteamb
   class Application < Rails::Application
     config.load_defaults 5.1
     config.api_only = true
+    config.autoload_paths << "#{Rails.root}/lib"
     # Unnecessary Middlewares
     config.middleware.delete Rack::Sendfile
   end
