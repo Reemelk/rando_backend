@@ -3,7 +3,7 @@ require_relative 'boot'
 require "rails"
 # Pick the frameworks you want:
 require "active_model/railtie"
-require "active_job/railtie"
+# require "active_job/railtie"
 require "active_record/railtie"
 require "action_controller/railtie"
 require "action_mailer/railtie"
@@ -23,5 +23,6 @@ module Monoteamb
     config.autoload_paths << "#{Rails.root}/lib"
     # Unnecessary Middlewares
     config.middleware.delete Rack::Sendfile
+    # config.middleware.insert_after ActionDispatch::Static, Rack::Deflater
   end
 end

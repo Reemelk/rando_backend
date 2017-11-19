@@ -1,10 +1,9 @@
 class CreateOrganizations < ActiveRecord::Migration[5.1]
   def change
     create_table :organizations do |t|
-      t.belongs_to, :user, index: true
-      t.belongs_to, :group, index: true
-      t.datetime, :organizations_date
-      
+      t.references :user, index: true, foreign_key: true, unique: true
+      t.references :group, index: true, foreign_key: true, unique: true
+
       t.timestamps
     end
   end

@@ -8,6 +8,6 @@ class Authorization
   end
 
   def pull_token
-    @headers.exists? ? @headers['Authorization'].split(' ')[1] : false
+    @headers.present? ? @headers['Authorization'].split(' ')[1] : false
   end
 end

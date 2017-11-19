@@ -7,12 +7,13 @@ end
 
 gem 'rails', '~> 5.1.4'
 gem 'pg', '~> 0.21.0'
-gem 'jwt', '~> 2.0'
-gem 'oj', git: 'https://github.com/ohler55/oj', branch: :master
+gem 'jwt', '~> 2.1'
+gem 'oj', '~> 3.3', '>= 3.3.9'
 gem 'oj_mimic_json', '~> 1.0', '>= 1.0.1'
 gem 'bcrypt', '~> 3.1', '>= 3.1.11'
-gem 'rack-cors', '~> 1.0', '>= 1.0.1'
-
+gem 'rack-cors', '~> 1.0', '>= 1.0.2'
+# gem 'rbnacl-libsodium'
+# gem 'rbnacl'
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 end
@@ -23,7 +24,7 @@ group :development do
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'bullet', '~> 5.6', '>= 5.6.1'
   gem 'meta_request', '~> 0.4.3'
-  gem 'rubocop', '~> 0.50.0'
+  gem 'rubocop', '~> 0.51.0'
   gem 'faker', '~> 1.8', '>= 1.8.4'
 end
 

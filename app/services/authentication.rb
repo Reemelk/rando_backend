@@ -4,21 +4,19 @@ class Authentication
   end
 
   def user
-    @user =|| auth
+    @user = auth
   end
 
   def create_token
     @jwt = JsonWebToken.encode(@user.id)
   end
 
-  private
-
   def auth
     begin
-      user = User.find_by!(email: @params[:email])
+      @user = User.find_by!(email: @params[:email])
     rescue ActiveRecord::RecordNotFound
       return false
     end
-    user&.authenticate(@params[:password])
+    @user&.authenticate(@params[:password])
   end
 end
