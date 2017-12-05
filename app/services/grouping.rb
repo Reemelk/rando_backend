@@ -5,7 +5,7 @@ class Grouping
     @status = params[:status] || nil
   end
 
-  def call
+  def proceed_to_actions
     group_action if [@user, @group].all?(&:present?)
     group_status if @status.present?
     @group
@@ -14,19 +14,36 @@ class Grouping
   # Actions
   def group_action
     @group.users.exists?(@user.id) ? remove_user : add_user
+    group_ongoing_cache
   end
 
   def group_status
-    @group.update_attributes(status: @status)
+    @status.eql?('closed') ? @group.closed! : @group.cancelled!
+    group_closed_cache
+    stock_new_token
   end
 
   def add_user
-    @group.errors.add(:limit_group, 'Vous avez atteint le maxium de joueur pour ce groupe') if @group.users.count >= @group.maxp
-    @group.errors.add(:already_in_group, 'Vous êtes déjà dans un groupe') if @user.groups.detect { |status| status.ongoing? }
+    @group.errors.add(:limit_group, 'Le nombre maximal de joueurs pour ce groupe a été atteint') if @group.organizations_count >= @group.maxp
+    @group.errors.add(:already_in_group, 'Vous êtes déjà dans un groupe') if @user.groups.exists?(status: :ongoing)
     @group.users << @user if @group.errors.empty?
   end
 
   def remove_user
     @group.users.delete(@user)
+  end
+
+  def group_ongoing_cache
+    $redis.set("group:#{@group.id}", @group.to_json(only: [:id, :user_leader, :name, :server, :fight_type, :organizations_count]))
+  end
+
+  def group_closed_cache
+    $redis.set("group:#{@group.id}", @group.to_json(only: [:id, :user_leader, :name, :server, :fight_type, :organizations_count], include: {users: {only: [:id, :username]}}))
+    $redis.expire("group:#{@group.id}", 24.hour.to_i)
+  end
+
+  def stock_new_token
+    new_token = JsonWebToken.set_ongoing_group(current_token)
+    $redis.set("tokens:users:#{@user.id}", new_token)
   end
 end

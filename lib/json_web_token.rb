@@ -2,7 +2,6 @@ class JsonWebToken
   class << self
     def encode(user_id)
       ongoing_group = User.find(user_id).groups.exists?(status: :ongoing)
-      puts ongoing_group
       payload = { sub: user_id, iat: Time.now.to_i, exp: 24.hours.from_now.to_i, ongoing_g: ongoing_group }
       JWT.encode(payload, Rails.application.secrets.secret_key_base)
     end

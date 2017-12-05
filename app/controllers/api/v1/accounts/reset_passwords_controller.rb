@@ -1,4 +1,4 @@
-class Api::V1::Accounts::Accounts::ResetPasswordsController < ApplicationRecord
+class Api::V1::Accounts::ResetPasswordsController < ApplicationRecord
   def update
   end
 end

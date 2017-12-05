@@ -15,8 +15,12 @@ class CreateGroups < ActiveRecord::Migration[5.1]
       t.integer :levelpmin, null: false, default: 0
       t.integer :levelpmax, null: false, default: 200
 
+      t.integer :organizations_count, null: false, default: 0
+
       t.integer :status, null: false, default: 0
+
       t.timestamps
     end
+    add_index :groups, :status
   end
 end

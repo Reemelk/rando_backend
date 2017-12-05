@@ -38,9 +38,11 @@ ActiveRecord::Schema.define(version: 20170929081509) do
     t.integer "range", default: 10, null: false
     t.integer "levelpmin", default: 0, null: false
     t.integer "levelpmax", default: 200, null: false
+    t.integer "organizations_count", default: 0, null: false
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["status"], name: "index_groups_on_status"
   end
 
   create_table "organizations", force: :cascade do |t|

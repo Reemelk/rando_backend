@@ -6,7 +6,11 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-@user = User.last
+#User.create(email: 'julien@julien.fr', username: 'julien', password: 'aqw')
+#User.create(email: 'maxime@maxime.fr', username: 'maxime', password: 'aqw')
+#User.create(email: 'nassim@nassim.fr', username: 'nassim', password: 'aqw')
+
+@user = User.first
 
 10.times do
   @user.characters.create(
@@ -30,3 +34,5 @@ end
     status: 0
   )
 end
+
+puts "ok"

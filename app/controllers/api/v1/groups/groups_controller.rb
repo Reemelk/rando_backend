@@ -4,16 +4,13 @@ class Api::V1::Groups::GroupsController < Api::V1::ApiController
 
   def index
     @groups = Group.select(:id, :name, :maxp).where("fight_type = ? AND server = ? AND status = 0 AND ? BETWEEN levelpmin AND levelpmax", params[:type], params[:server], params[:level])
-
     render json: @groups, status: :accepted
   end
 
   def show
-    #Redo properly
-    @group = Group.select(:id, :user_leader, :name, :maxp, :server, :fight_type).find(params[:id])
-    @users = User.joins(:groups).where(groups: {id: params[:id]}).select(:id, :username)
-
-    render json: [@group, @users], status: :accepted
+    # datas[0] returns group info / datas[1] returns updated status token if there's one stored in redis
+    @datas = GroupSession.new(params).which_path?
+    render json: @datas, status: :accepted
   end
 
   def create
@@ -26,7 +23,7 @@ class Api::V1::Groups::GroupsController < Api::V1::ApiController
   end
 
   def update
-    @group = Grouping.new(params).call
+    @group = Grouping.new(params).proceed_to_actions
     if @group.errors.empty?
       render json: { token: JsonWebToken.set_ongoing_group(current_token) }, status: :ok
     else
