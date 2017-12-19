@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  scope 'api' do # angular proxy settings
+  scope 'api', defaults: { format: :json }  do
     scope module: 'api' do
       scope module: 'v1' do
         scope module: 'accounts' do
@@ -13,6 +13,10 @@ Rails.application.routes.draw do
         scope module: 'groups' do
           get '/groups/type/:type/srv/:server/lvl/:level/', to: 'groups#index'
           resources :groups, only: [:show, :create, :update]
+          resources :update_token_statuses, only: :show
+        end
+        scope module: 'users' do
+          resources :current_group, only: :show
         end
       end
     end

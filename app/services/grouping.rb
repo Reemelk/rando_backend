@@ -20,7 +20,7 @@ class Grouping
   def group_status
     @status.eql?('closed') ? @group.closed! : @group.cancelled!
     group_closed_cache
-    stock_new_token
+    store_new_token
   end
 
   def add_user
@@ -34,16 +34,20 @@ class Grouping
   end
 
   def group_ongoing_cache
-    $redis.set("group:#{@group.id}", @group.to_json(only: [:id, :user_leader, :name, :server, :fight_type, :organizations_count]))
+    $redis.set("group:#{@group.id}", @group.to_json(only: [:id, :user_leader, :name, :server, :maxp, :fight_type, :status, :organizations_count]))
   end
 
   def group_closed_cache
-    $redis.set("group:#{@group.id}", @group.to_json(only: [:id, :user_leader, :name, :server, :fight_type, :organizations_count], include: {users: {only: [:id, :username]}}))
+    $redis.set("group:#{@group.id}", @group.to_json(only: [:id, :user_leader, :name, :server, :fight_type, :status], include: {users: {only: [:id, :username]}}))
     $redis.expire("group:#{@group.id}", 24.hour.to_i)
   end
 
-  def stock_new_token
-    new_token = JsonWebToken.set_ongoing_group(current_token)
-    $redis.set("tokens:users:#{@user.id}", new_token)
+  def store_new_token
+    group = JSON.load($redis.get("group:#{@group.id}") || @group.to_json(only: [:id, :user_leader, :name, :server, :fight_type, :organizations_count], include: {users: {only: [:id, :username]}}))
+    group["users"].delete_if {|h| h["id"] == group["user_leader"]}
+    group["users"].each do |user|
+      updated_token = JsonWebToken.encode(user["id"])
+      $redis.set("tokens:users:#{user["id"]}", updated_token)
+    end
   end
 end

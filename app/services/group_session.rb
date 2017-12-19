@@ -10,7 +10,7 @@ class GroupSession
   def group_without_assocs
     g = $redis.get("group:#{@group.id}")
     if g.nil?
-      g = @group.to_json(only: [:id, :user_leader, :name, :server, :fight_type, :organizations_count])
+      g = @group.to_json(only: [:id, :user_leader, :name, :server, :maxp, :fight_type, :status, :organizations_count])
       $redis.set("group:#{@group.id}", g)
     end
     @group = JSON.load(g)
@@ -23,12 +23,5 @@ class GroupSession
       $redis.set("group:#{@group.id}", g)
     end
     @group = JSON.load(g)
-    @token = update_status_token?
-    return @group, @token
-  end
-
-  def update_status_token?
-    @user_id = JsonWebToken.decode(current_token)['sub']
-    $redis.get("tokens:users:#{@user_id}").nil? if true
   end
 end

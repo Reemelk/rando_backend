@@ -12,4 +12,8 @@ class Api::V1::ApiController < ApplicationController
     @request = Authorization.new(request.headers)
     @request.pull_token
   end
+
+  def token_user_id
+    JsonWebToken.decode(current_token)['sub']
+  end
 end
